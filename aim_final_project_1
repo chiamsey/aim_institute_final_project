@@ -17,9 +17,16 @@ class Hero(Character):
         if self.energy >= 5:
             self.energy -= 5
             self.experience += 1
-            print(f"{self.name} attacks monster!You are now at level {self.level}")
+            print(f"{self.name} attacks monster!")
         else:
             print(f"{self.name} does not have enough energy to attack.")
+    
+    def level_up(self):
+        if self.experience % 5 == 0:
+            self.level += 1
+            print(f"{self.name} leveled up to level {self.level}!")
+        else:
+            print(f"{self.name} level is {self.level}")
 
 class Monster(Character): 
     def __init__(self, name):
