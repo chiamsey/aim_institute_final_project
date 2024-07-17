@@ -1,5 +1,5 @@
 class Character:
-    def __init__(self, name, experience, level=1, health=100, energy=100):
+    def __init__(self, name, experience, level, health=100, energy=100):
         self.name = name
         self.health = health
         self.energy = energy
@@ -24,4 +24,11 @@ class Hero(Character):
 
 class Monster(Character): 
     def __init__(self, name):
-        super().__init__(name, experience=10, level=1)
+        super().__init__(name, experience=10, level=3)
+
+    def attack(self):
+        if self.energy >= 10:
+            self.energy -= 10
+            print(f"{self.name} attacks hero!")
+        else:
+            print(f"{self.name} does not have enough energy to attack.")
