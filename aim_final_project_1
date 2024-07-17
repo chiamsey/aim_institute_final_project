@@ -18,7 +18,7 @@ class Hero(Character):
             self.energy -= 5
             self.experience += 1
             print(f"{self.name} attacks monster!")
-            self.level_up()
+            self.level()
         else:
             print(f"{self.name} does not have enough energy to attack.")
 
