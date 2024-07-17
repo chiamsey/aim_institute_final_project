@@ -1,0 +1,10 @@
+class Character:
+    def __init__(self, name, health, energy, experience, level):
+        self.name = name
+        self.health = health
+        self.energy = energy
+        self.experience = experience
+        self.level = level
+
+hero = Character("Hero", 100, 100, 0, 0)
+monster = Character("Monster", 100, 100, 10, 0)
