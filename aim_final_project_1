@@ -1,40 +1,88 @@
 class Character:
-    def __init__(self, name, experience, level, health=100, energy=100):
+    def __init__(self, name, health=100, energy=100, experience=0, level=1):
         self.name = name
         self.health = health
         self.energy = energy
         self.experience = experience
         self.level = level
-    
-    def attack(self):
+
+#define attack method
+    def attack(self, target):
         pass
 
-class Hero(Character): 
+class Hero(Character):
     def __init__(self, name):
         super().__init__(name, experience=0, level=1)
 
-    def attack(self):
+#if Hero attacks, hero: energy -5, experience + 1, level up every +5 experience (%5 ==0), monster: health -10
+#if monster attacks, monster: energy -10, hero: health -15, monster doesn't level up
+    def attack(self, target):
         if self.energy >= 5:
             self.energy -= 5
             self.experience += 1
-            print(f"{self.name} attacks monster!")
+            target.health -= 10
+            print(f"{self.name} attacks {target.name}!")
+            self.level_up()
         else:
             print(f"{self.name} does not have enough energy to attack.")
-    
+
     def level_up(self):
         if self.experience % 5 == 0:
             self.level += 1
             print(f"{self.name} leveled up to level {self.level}!")
-        else:
-            print(f"{self.name} level is {self.level}")
 
-class Monster(Character): 
+class Monster(Character):
     def __init__(self, name):
         super().__init__(name, experience=10, level=3)
 
-    def attack(self):
+    def attack(self, target):
         if self.energy >= 10:
             self.energy -= 10
-            print(f"{self.name} attacks hero!")
+            target.health -= 15
+            print(f"{self.name} attacks {target.name}!")
         else:
             print(f"{self.name} does not have enough energy to attack.")
+
+def stats(hero, monster):
+    print(f"Hero: {hero.name}, Health: {hero.health}, Energy: {hero.energy}, Experience: {hero.experience}, Level: {hero.level}")
+    print(f"Monster: {monster.name}, Health: {monster.health}, Energy: {monster.energy}, Experience: {monster.experience}, Level: {monster.level}")
+
+def gameplay():
+    python_hero = Hero(name="Python Hero")
+    java_monster = Monster(name="Java Monster")
+
+    while True:
+        stats(python_hero, java_monster)
+        print("Options:")
+        print("1. Attack")
+        print("2. Run")
+
+        choice = input("Python Hero's action: ")
+
+        if choice == "1":
+            python_hero.attack(java_monster)#hero attacks monster, overwritting the target method
+            if java_monster.health <= 0:
+                print(f"{python_hero.name} has defeated {java_monster.name}!")
+                python_hero.experience += 10#hero kills monster, +10 experience
+                python_hero.level_up()
+                play_again = input("Do you want to play again? (yes/no): ")
+                if play_again.lower() == "yes":#possible to insert raise exception or error
+                    python_hero = Hero(name="Python Hero")
+                    java_monster = Monster(name="Java Monster")
+                else:
+                    print("Thanks for playing!")
+                    break
+            else:
+                java_monster.attack(python_hero)
+                if python_hero.health <= 20:
+                    print(f"Warning: {python_hero.name}'s health is low!")
+                if python_hero.health <= 0:
+                    print(f"{python_hero.name} has died. Game Over.")
+                    break
+        elif choice == "2":
+            print(f"{python_hero.name} ran away. Game Ends.")
+            break
+        else:
+            print("Invalid choice. Please select 1 or 2.")#possible to insert raise exception or error, or try except
+
+gameplay()
