@@ -1,4 +1,4 @@
-import random #need to re-run in colab cz colab not working
+import random 
 
 class Character:
     def __init__(self, name, health=100, energy=100, experience=0, level=1):
@@ -80,7 +80,7 @@ def gameplay():
         choice = input("Python Hero's action: ")
 
         if choice == "1":
-            block_prob = random.random() < 0.5  #50% probability of the monster blocks the attack
+            block_prob = random.random() < 0.3  #30% probability of the monster blocks the attack
             python_hero.attack(java_monster, block_prob)
             if java_monster.health <= 0:
                 print(f"{python_hero.name} has defeated {java_monster.name}!")
@@ -93,7 +93,7 @@ def gameplay():
                 else:
                     print("Thanks for playing!")
                     break
-            else:#need to recheck on this 
+            else:
                 if python_hero.health <= 20:
                     print(f"Warning: {python_hero.name}'s health is low!")
                 if python_hero.health <= 0:
