@@ -1,4 +1,4 @@
-import random
+import random #need to re-run in colab cz colab not working
 
 class Character:
     def __init__(self, name, health=100, energy=100, experience=0, level=1):
@@ -12,15 +12,24 @@ class Character:
     def attack(self, target):
         pass
 
+#define block method
+    def block(self):
+        pass
+
 class Hero(Character):
     def __init__(self, name):
         super().__init__(name, experience=0, level=1)
 
 #if Hero attacks, hero: energy -5, experience + 1, level up every +5 experience (%5 ==0), monster: health -10
 #if monster attacks, monster: energy -10, hero: health -15, monster doesn't level up
-    def attack(self, target):
+#Add criteria: Monster blocks: -5 energy, Hero blocks: -2 energy 
+    def attack(self, target, block_prob):
         if self.energy >= 5:
-            self.energy -= 5
+          if block_prob: #Monster blocks, -5 energy
+            target.energy -= 5
+            print(f"{target.name} blocks the attack!")
+            
+            self.energy -= 5#Hero attacks
             self.experience += 1
             target.health -= 10
             print(f"{self.name} attacks {target.name}!")
@@ -32,6 +41,10 @@ class Hero(Character):
         if self.experience % 5 == 0:
             self.level += 1
             print(f"{self.name} leveled up to level {self.level}!")
+
+    def block(self):#Hero blocks, -2 energy
+        self.energy -= 2
+        print(f"{self.name} blocks the attack!")
 
 class Monster(Character):
     def __init__(self, name):
@@ -45,6 +58,10 @@ class Monster(Character):
         else:
             print(f"{self.name} does not have enough energy to attack.")
 
+    def block(self):#monster blocks, -5 energy
+        self.energy -= 5
+        print(f"{self.name} blocks the attack!")
+
 def stats(hero, monster):
     print(f"Hero: {hero.name}, Health: {hero.health}, Energy: {hero.energy}, Experience: {hero.experience}, Level: {hero.level}")
     print(f"Monster: {monster.name}, Health: {monster.health}, Energy: {monster.energy}, Experience: {monster.experience}, Level: {monster.level}")
@@ -57,12 +74,14 @@ def gameplay():
         stats(python_hero, java_monster)
         print("Options:")
         print("1. Attack")
-        print("2. Run")
+        print("2. Block")
+        print("3. Run")
 
         choice = input("Python Hero's action: ")
 
         if choice == "1":
-            python_hero.attack(java_monster)#hero attacks monster, overwritting the target method
+            block_prob = random.random() < 0.5  #50% probability of the monster blocks the attack
+            python_hero.attack(java_monster, block_prob)
             if java_monster.health <= 0:
                 print(f"{python_hero.name} has defeated {java_monster.name}!")
                 python_hero.experience += 10#hero kills monster, +10 experience
@@ -74,14 +93,23 @@ def gameplay():
                 else:
                     print("Thanks for playing!")
                     break
-            else:
-                java_monster.attack(python_hero)
+            else:#need to recheck on this 
                 if python_hero.health <= 20:
                     print(f"Warning: {python_hero.name}'s health is low!")
                 if python_hero.health <= 0:
                     print(f"{python_hero.name} has died. Game Over.")
                     break
+       
         elif choice == "2":
+            python_hero.block()
+            java_monster.attack(python_hero)
+            if python_hero.health <= 20:
+                print(f"Warning: {python_hero.name}'s health is low!")
+            if python_hero.health <= 0:
+                print(f"{python_hero.name} has died. Game Over.")
+                break
+        
+        elif choice == "3":
             print(f"{python_hero.name} ran away. Game Ends.")
             break
         else:
