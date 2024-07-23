@@ -1,3 +1,5 @@
+#user feedback: hero needs to win
+#game ends too early
 import random 
 
 class Character:
@@ -8,11 +10,9 @@ class Character:
         self.experience = experience
         self.level = level
 
-#define attack method
     def attack(self, target):
         pass
 
-#define block method
     def block(self):
         pass
 
@@ -20,19 +20,16 @@ class Hero(Character):
     def __init__(self, name):
         super().__init__(name, experience=0, level=1)
 
-#if Hero attacks, hero: energy -5, experience + 1, level up every +5 experience (%5 ==0), monster: health -10
-#if monster attacks, monster: energy -10, hero: health -15, monster doesn't level up
-#Add criteria: Monster blocks: -5 energy, Hero blocks: -2 energy 
-    def attack(self, target, block_prob):
+    def attack(self, target, weapon):
         if self.energy >= 5:
-          if block_prob: #Monster blocks, -5 energy
-            target.energy -= 5
-            print(f"{target.name} blocks the attack!")
-            
-            self.energy -= 5#Hero attacks
+            self.energy -= 5
             self.experience += 1
-            target.health -= 10
-            print(f"{self.name} attacks {target.name}!")
+            if weapon == 'sword':
+                target.health -= 10
+                print(f"{self.name} attacks {target.name} with a sword!")
+            elif weapon == 'tackle':
+                target.health -= 5
+                print(f"{self.name} tackles {target.name}!")
             self.level_up()
         else:
             print(f"{self.name} does not have enough energy to attack.")
@@ -42,7 +39,7 @@ class Hero(Character):
             self.level += 1
             print(f"{self.name} leveled up to level {self.level}!")
 
-    def block(self):#Hero blocks, -2 energy
+    def block(self):  #Hero blocks, -2 energy
         self.energy -= 2
         print(f"{self.name} blocks the attack!")
 
@@ -58,7 +55,7 @@ class Monster(Character):
         else:
             print(f"{self.name} does not have enough energy to attack.")
 
-    def block(self):#monster blocks, -5 energy
+    def block(self):  #Monster blocks, -5 energy
         self.energy -= 5
         print(f"{self.name} blocks the attack!")
 
@@ -73,34 +70,86 @@ def gameplay():
     while True:
         stats(python_hero, java_monster)
         print("Options:")
-        print("1. Attack")
-        print("2. Block")
-        print("3. Run")
+        print("1. Attack with sword")
+        print("2. Tackle")
+        print("3. Block")
+        print("4. Run")
 
         choice = input("Python Hero's action: ")
 
         if choice == "1":
             block_prob = random.random() < 0.3  #30% probability of the monster blocks the attack
-            python_hero.attack(java_monster, block_prob)
-            if java_monster.health <= 0:
-                print(f"{python_hero.name} has defeated {java_monster.name}!")
-                python_hero.experience += 10#hero kills monster, +10 experience
-                python_hero.level_up()
-                play_again = input("Do you want to play again? (yes/no): ")
-                if play_again.lower() == "yes":#possible to insert raise exception or error
-                    python_hero = Hero(name="Python Hero")
-                    java_monster = Monster(name="Java Monster")
-                else:
-                    print("Thanks for playing!")
-                    break
-            else:
-                if python_hero.health <= 20:
-                    print(f"Warning: {python_hero.name}'s health is low!")
+            if block_prob:
+                java_monster.block()
+                java_monster.attack(python_hero)
                 if python_hero.health <= 0:
                     print(f"{python_hero.name} has died. Game Over.")
                     break
-       
+            else:
+                python_hero.attack(java_monster, 'sword')
+                if java_monster.health <= 0:
+                    print(f"{python_hero.name} has defeated {java_monster.name}!")
+                    python_hero.experience += 10  #Hero kills monster, +10 experience
+                    python_hero.level_up()
+                    while True:
+                        try:
+                            play_again = input("Do you want to play again? (yes/no): ")
+                            if play_again.lower() not in ["yes", "no"]:
+                                raise ValueError("Invalid input. Please enter 'yes' or 'no'.")
+                            elif not isinstance(play_again, str):
+                                raise TypeError("Invalid input type. Please enter a string.")
+                            break
+                        except ValueError:
+                            print("Invalid input. Please enter 'yes' or 'no'.")
+                        except TypeError:
+                            print("Invalid input type. Please enter a string.")
+                    
+                    if play_again.lower() == "yes":
+                        python_hero = Hero(name="Python Hero")
+                        java_monster = Monster(name="Java Monster")
+                    else:
+                        print("Thanks for playing!")
+                        break
+                if python_hero.health <= 20:
+                    print(f"Warning: {python_hero.name}'s health is low!")
+
         elif choice == "2":
+            block_prob = random.random() < 0.3  #30% probability of the monster blocks the attack
+            if block_prob:
+                java_monster.block()
+                java_monster.attack(python_hero)
+                if python_hero.health <= 0:
+                    print(f"{python_hero.name} has died. Game Over.")
+                    break
+            else:
+                python_hero.attack(java_monster, 'tackle')
+                if java_monster.health <= 0:
+                    print(f"{python_hero.name} has defeated {java_monster.name}!")
+                    python_hero.experience += 10  #Hero kills monster, +10 experience
+                    python_hero.level_up()
+                    while True:
+                        try:
+                            play_again = input("Do you want to play again? (yes/no): ")
+                            if play_again.lower() not in ["yes", "no"]:
+                                raise ValueError("Invalid input. Please enter 'yes' or 'no'.")
+                            elif not isinstance(play_again, str):
+                                raise TypeError("Invalid input type. Please enter a string.")
+                            break
+                        except ValueError as ve:
+                            print(ve)
+                        except TypeError as te:
+                            print(te)
+
+                    if play_again.lower() == "yes":
+                        python_hero = Hero(name="Python Hero")
+                        java_monster = Monster(name="Java Monster")
+                    else:
+                        print("Thanks for playing!")
+                        break
+                if python_hero.health <= 20:
+                    print(f"Warning: {python_hero.name}'s health is low!")
+
+        elif choice == "3":
             python_hero.block()
             java_monster.attack(python_hero)
             if python_hero.health <= 20:
@@ -109,10 +158,11 @@ def gameplay():
                 print(f"{python_hero.name} has died. Game Over.")
                 break
         
-        elif choice == "3":
+        elif choice == "4":
             print(f"{python_hero.name} ran away. Game Ends.")
             break
+
         else:
-            print("Invalid choice. Please select 1 or 2.")#possible to insert raise exception or error, or try except
+            print("Invalid choice. Please select 1, 2, 3, or 4.")  #Possible to insert raise exception or error, or try except
 
 gameplay()
