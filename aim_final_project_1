@@ -10,6 +10,10 @@ class Character:
         self.experience = experience
         self.level = level
 
+    def __repr__(self):
+        return (f"{self.name}: Health: {self.health}, Energy: {self.energy}, "
+                f"Experience: {self.experience}, Level: {self.level}")
+
     def attack(self, target):
         pass
 
@@ -25,10 +29,10 @@ class Hero(Character):
             self.energy -= 5
             self.experience += 1
             if weapon == 'sword':
-                target.health -= 10
+                target.health -= 5
                 print(f"{self.name} attacks {target.name} with a sword!")
             elif weapon == 'tackle':
-                target.health -= 5
+                target.health -= 3
                 print(f"{self.name} tackles {target.name}!")
             self.level_up()
         else:
@@ -60,8 +64,8 @@ class Monster(Character):
         print(f"{self.name} blocks the attack!")
 
 def stats(hero, monster):
-    print(f"Hero: {hero.name}, Health: {hero.health}, Energy: {hero.energy}, Experience: {hero.experience}, Level: {hero.level}")
-    print(f"Monster: {monster.name}, Health: {monster.health}, Energy: {monster.energy}, Experience: {monster.experience}, Level: {monster.level}")
+    print(hero)
+    print(monster)
 
 def gameplay():
     python_hero = Hero(name="Python Hero")
@@ -99,10 +103,10 @@ def gameplay():
                             elif not isinstance(play_again, str):
                                 raise TypeError("Invalid input type. Please enter a string.")
                             break
-                        except ValueError:
-                            print("Invalid input. Please enter 'yes' or 'no'.")
-                        except TypeError:
-                            print("Invalid input type. Please enter a string.")
+                        except ValueError as ve:
+                            print(ve)
+                        except TypeError as te:
+                            print(te)
                     
                     if play_again.lower() == "yes":
                         python_hero = Hero(name="Python Hero")
