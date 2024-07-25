@@ -2,6 +2,11 @@
 #game ends too early
 import random 
 
+
+#requirement: 
+#Hero - default experience value: 0, skill level: 1,  health & energy:100
+#Monster - default experience value: 10, skill level: 3, health & energy:100
+
 class Character:
     def __init__(self, name, health=100, energy=100, experience=0, level=1):
         self.name = name
@@ -10,7 +15,7 @@ class Character:
         self.experience = experience
         self.level = level
 
-    def __repr__(self):
+    def __repr__(self): #returns a formatted string that includes the character's name, health, energy, experience, and level.
         return (f"{self.name}: Health: {self.health}, Energy: {self.energy}, "
                 f"Experience: {self.experience}, Level: {self.level}")
 
@@ -28,18 +33,18 @@ class Hero(Character):
         if self.energy >= 5:
             self.energy -= 5
             self.experience += 1
-            if weapon == 'sword':
-                target.health -= 5
+            if weapon == 'sword': #attack with sword, target health:-5, energy: -5
+                target.health -= 8
                 print(f"{self.name} attacks {target.name} with a sword!")
-            elif weapon == 'tackle':
-                target.health -= 3
+            elif weapon == 'tackle':#attack with tackle, target health: -3, energy: -5
+                target.health -= 5
                 print(f"{self.name} tackles {target.name}!")
             self.level_up()
         else:
             print(f"{self.name} does not have enough energy to attack.")
 
     def level_up(self):
-        if self.experience % 5 == 0:
+        if self.experience % 5 == 0: #every 5 exp points
             self.level += 1
             print(f"{self.name} leveled up to level {self.level}!")
 
@@ -79,7 +84,13 @@ def gameplay():
         print("3. Block")
         print("4. Run")
 
-        choice = input("Python Hero's action: ")
+        try:
+            choice = input("Python Hero's action: ")
+            if choice not in ["1", "2", "3", "4"]:
+                raise ValueError("Invalid choice. Please select '1', '2', '3', or '4'.")
+        except ValueError:
+            print("ValueError. Please select '1', '2', '3' or '4'.")
+            continue
 
         if choice == "1":
             block_prob = random.random() < 0.3  #30% probability of the monster blocks the attack
@@ -101,19 +112,20 @@ def gameplay():
                             if play_again.lower() not in ["yes", "no"]:
                                 raise ValueError("Invalid input. Please enter 'yes' or 'no'.")
                             elif not isinstance(play_again, str):
-                                raise TypeError("Invalid input type. Please enter a string.")
+                                raise TypeError("Invalid input type. Choose either 'yes' or 'no'.")
                             break
-                        except ValueError as ve:
-                            print(ve)
-                        except TypeError as te:
-                            print(te)
-                    
+                        except ValueError:
+                            print("Invalid input. Please enter 'yes' or 'no'.")
+                        except TypeError:
+                            print("Invalid input type. Choose either 'yes' or 'no'.")
+
                     if play_again.lower() == "yes":
                         python_hero = Hero(name="Python Hero")
                         java_monster = Monster(name="Java Monster")
                     else:
                         print("Thanks for playing!")
                         break
+
                 if python_hero.health <= 20:
                     print(f"Warning: {python_hero.name}'s health is low!")
 
@@ -137,12 +149,12 @@ def gameplay():
                             if play_again.lower() not in ["yes", "no"]:
                                 raise ValueError("Invalid input. Please enter 'yes' or 'no'.")
                             elif not isinstance(play_again, str):
-                                raise TypeError("Invalid input type. Please enter a string.")
+                                raise TypeError("Invalid input type. Choose either 'yes' or 'no'.")
                             break
-                        except ValueError as ve:
-                            print(ve)
-                        except TypeError as te:
-                            print(te)
+                        except ValueError:
+                            print("Invalid input. Please enter 'yes' or 'no'.")
+                        except TypeError:
+                            print("Invalid input type. Choose either 'yes' or 'no'.")
 
                     if play_again.lower() == "yes":
                         python_hero = Hero(name="Python Hero")
